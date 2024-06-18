@@ -1,0 +1,19 @@
+directive @User on FIELD_DEFINITION
+type UserQuery {
+	Fetch(in: FetchRequestInput): FetchResponse
+}
+input FetchRequestInput {
+	limit: Int
+	offset: Int
+	sortBy: String
+	sort: String
+}
+type FetchResponse {
+	isSuccess: Boolean
+	message: String
+	data: UserItems
+	status: Int
+}
+type UserItems {
+	items: [UserLoginData!]
+}

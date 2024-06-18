@@ -1,0 +1,26 @@
+directive @Auth on FIELD_DEFINITION
+type AuthMutation {
+	Login(in: LoginRequestInput): LoginResponse
+}
+type Data {
+	token: String
+	refreshToken: String
+	userData: UserLoginData
+}
+type UserLoginData{
+	id: String
+	username: String
+	role: String
+    email: String
+	name: String
+}
+type LoginResponse {
+	isSuccess: Boolean
+	message: String
+	data: Data
+	status: Int
+}
+input LoginRequestInput {
+	username: String
+	password: String
+}

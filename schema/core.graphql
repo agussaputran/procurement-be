@@ -1,0 +1,12 @@
+directive @loggedIn(loggedIn: login!) on FIELD_DEFINITION
+
+input login {
+    access: String!
+}
+
+type Mutation {
+	Auth: AuthMutation!
+}
+type Query {
+	User: UserQuery!
+}
