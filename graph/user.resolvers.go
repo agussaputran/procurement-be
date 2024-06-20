@@ -6,43 +6,53 @@ package graph
 
 import (
 	"context"
-	"log"
-	db "procurement-be/database"
 	"procurement-be/graph/generated"
 	"procurement-be/graph/model"
-
-	"go.mongodb.org/mongo-driver/bson"
+	"procurement-be/pkg/user"
+	"procurement-be/utils"
 )
 
-// Fetch is the resolver for the Fetch field.
-func (r *userQueryResolver) Fetch(ctx context.Context, obj *model.EmptyObject, in *model.FetchRequestInput) (*model.FetchResponse, error) {
-	collection := db.GetCollection("users")
-	cursor, err := collection.Find(context.TODO(), bson.D{})
+// Store is the resolver for the Store field.
+func (r *userMutationResolver) Store(ctx context.Context, obj *model.EmptyObject, in *model.UserDataInput) (*model.LoginResponse, error) {
+	response := new(model.LoginResponse)
+	result, err := r.PkgHandler.UserHandler.Store(ctx, user.UserData{
+		Role:     *in.Role,
+		Email:    *in.Email,
+		Name:     *in.Name,
+		Password: *in.Password,
+	})
 	if err != nil {
-		log.Fatal(err)
-	}
-	defer cursor.Close(ctx)
-	var users []*model.UserLoginData
-	for cursor.Next(ctx) {
-		var user model.UserLoginData
-		if err = cursor.Decode(&user); err != nil {
-			log.Fatal(err)
-		}
-		users = append(users, &user)
-	}
-	if err := cursor.Err(); err != nil {
 		return nil, err
 	}
 
-	resp := &model.FetchResponse{
-		Data: &model.UserItems{
-			Items: users,
-		},
+	if err = utils.CopyObject(result, &response); err != nil {
+		return nil, err
 	}
-	return resp, nil
+	return response, nil
 }
+
+// Fetch is the resolver for the Fetch field.
+func (r *userQueryResolver) Fetch(ctx context.Context, obj *model.EmptyObject, in *model.FetchRequestInput) (*model.FetchResponse, error) {
+	response := new(model.FetchResponse)
+	result, err := r.PkgHandler.UserHandler.Fetch(ctx, user.UserData{
+		Role: *in.Role,
+		Name: *in.Name,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CopyObject(result, &response); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
+// UserMutation returns generated.UserMutationResolver implementation.
+func (r *Resolver) UserMutation() generated.UserMutationResolver { return &userMutationResolver{r} }
 
 // UserQuery returns generated.UserQueryResolver implementation.
 func (r *Resolver) UserQuery() generated.UserQueryResolver { return &userQueryResolver{r} }
 
+type userMutationResolver struct{ *Resolver }
 type userQueryResolver struct{ *Resolver }

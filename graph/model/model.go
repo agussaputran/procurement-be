@@ -3,16 +3,13 @@
 package model
 
 type Data struct {
-	Token        *string        `json:"token,omitempty"`
-	RefreshToken *string        `json:"refreshToken,omitempty"`
-	UserData     *UserLoginData `json:"userData,omitempty"`
+	Token    *string   `json:"token,omitempty"`
+	UserData *UserData `json:"userData,omitempty"`
 }
 
 type FetchRequestInput struct {
-	Limit  *int    `json:"limit,omitempty"`
-	Offset *int    `json:"offset,omitempty"`
-	SortBy *string `json:"sortBy,omitempty"`
-	Sort   *string `json:"sort,omitempty"`
+	Role *string `json:"role,omitempty"`
+	Name *string `json:"name,omitempty"`
 }
 
 type FetchResponse struct {
@@ -23,7 +20,7 @@ type FetchResponse struct {
 }
 
 type LoginRequestInput struct {
-	Username *string `json:"username,omitempty"`
+	Email    *string `json:"email,omitempty"`
 	Password *string `json:"password,omitempty"`
 }
 
@@ -40,16 +37,24 @@ type Mutation struct {
 type Query struct {
 }
 
-type UserItems struct {
-	Items []*UserLoginData `json:"items,omitempty"`
+type UserData struct {
+	ID        *string `json:"id,omitempty"`
+	Role      *string `json:"role,omitempty"`
+	Email     *string `json:"email,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
 }
 
-type UserLoginData struct {
+type UserDataInput struct {
 	ID       *string `json:"id,omitempty"`
-	Username *string `json:"username,omitempty"`
 	Role     *string `json:"role,omitempty"`
 	Email    *string `json:"email,omitempty"`
 	Name     *string `json:"name,omitempty"`
+	Password *string `json:"password,omitempty"`
+}
+
+type UserItems struct {
+	Items []*UserData `json:"items,omitempty"`
 }
 
 type Login struct {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	cf "procurement-be/config"
-	db "procurement-be/database"
 	"procurement-be/handler"
 	"strconv"
 
@@ -27,7 +26,8 @@ func run() error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	db.Connect()
+	// db.Connect()
+	// db.Migrate()
 
 	// start server
 	server := fiber.New(
@@ -52,7 +52,7 @@ func run() error {
 	if conf.Service.Port != 0 {
 		port = strconv.Itoa(conf.Service.Port)
 	}
-	return server.Listen(":" + port)
+	return server.Listen("0.0.0.0:" + port)
 }
 
 func main() {

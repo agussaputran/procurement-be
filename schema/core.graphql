@@ -6,6 +6,7 @@ input login {
 
 type Mutation {
 	Auth: AuthMutation!
+	User: UserMutation!
 }
 type Query {
 	User: UserQuery!

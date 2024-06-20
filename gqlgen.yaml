@@ -60,6 +60,9 @@ models:
   UserQuery:
     model:
       - procurement-be/graph/model.EmptyObject
+  UserMutation:
+    model:
+      - procurement-be/graph/model.EmptyObject
   AuthMutation:
     model:
       - procurement-be/graph/model.EmptyObject

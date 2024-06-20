@@ -36,6 +36,7 @@ type ResolverRoot interface {
 	AuthMutation() AuthMutationResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	UserMutation() UserMutationResolver
 	UserQuery() UserQueryResolver
 }
 
@@ -51,9 +52,8 @@ type ComplexityRoot struct {
 	}
 
 	Data struct {
-		RefreshToken func(childComplexity int) int
-		Token        func(childComplexity int) int
-		UserData     func(childComplexity int) int
+		Token    func(childComplexity int) int
+		UserData func(childComplexity int) int
 	}
 
 	FetchResponse struct {
@@ -72,6 +72,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		Auth func(childComplexity int) int
+		User func(childComplexity int) int
 	}
 
 	Query struct {
@@ -79,16 +80,20 @@ type ComplexityRoot struct {
 		__resolve__service func(childComplexity int) int
 	}
 
+	UserData struct {
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Role      func(childComplexity int) int
+	}
+
 	UserItems struct {
 		Items func(childComplexity int) int
 	}
 
-	UserLoginData struct {
-		Email    func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Role     func(childComplexity int) int
-		Username func(childComplexity int) int
+	UserMutation struct {
+		Store func(childComplexity int, in *model.UserDataInput) int
 	}
 
 	UserQuery struct {
@@ -130,13 +135,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AuthMutation.Login(childComplexity, args["in"].(*model.LoginRequestInput)), true
-
-	case "Data.refreshToken":
-		if e.complexity.Data.RefreshToken == nil {
-			break
-		}
-
-		return e.complexity.Data.RefreshToken(childComplexity), true
 
 	case "Data.token":
 		if e.complexity.Data.Token == nil {
@@ -215,6 +213,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Auth(childComplexity), true
 
+	case "Mutation.User":
+		if e.complexity.Mutation.User == nil {
+			break
+		}
+
+		return e.complexity.Mutation.User(childComplexity), true
+
 	case "Query.User":
 		if e.complexity.Query.User == nil {
 			break
@@ -229,6 +234,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.__resolve__service(childComplexity), true
 
+	case "UserData.createdAt":
+		if e.complexity.UserData.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.UserData.CreatedAt(childComplexity), true
+
+	case "UserData.email":
+		if e.complexity.UserData.Email == nil {
+			break
+		}
+
+		return e.complexity.UserData.Email(childComplexity), true
+
+	case "UserData.id":
+		if e.complexity.UserData.ID == nil {
+			break
+		}
+
+		return e.complexity.UserData.ID(childComplexity), true
+
+	case "UserData.name":
+		if e.complexity.UserData.Name == nil {
+			break
+		}
+
+		return e.complexity.UserData.Name(childComplexity), true
+
+	case "UserData.role":
+		if e.complexity.UserData.Role == nil {
+			break
+		}
+
+		return e.complexity.UserData.Role(childComplexity), true
+
 	case "UserItems.items":
 		if e.complexity.UserItems.Items == nil {
 			break
@@ -236,40 +276,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserItems.Items(childComplexity), true
 
-	case "UserLoginData.email":
-		if e.complexity.UserLoginData.Email == nil {
+	case "UserMutation.Store":
+		if e.complexity.UserMutation.Store == nil {
 			break
 		}
 
-		return e.complexity.UserLoginData.Email(childComplexity), true
-
-	case "UserLoginData.id":
-		if e.complexity.UserLoginData.ID == nil {
-			break
+		args, err := ec.field_UserMutation_Store_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
 		}
 
-		return e.complexity.UserLoginData.ID(childComplexity), true
-
-	case "UserLoginData.name":
-		if e.complexity.UserLoginData.Name == nil {
-			break
-		}
-
-		return e.complexity.UserLoginData.Name(childComplexity), true
-
-	case "UserLoginData.role":
-		if e.complexity.UserLoginData.Role == nil {
-			break
-		}
-
-		return e.complexity.UserLoginData.Role(childComplexity), true
-
-	case "UserLoginData.username":
-		if e.complexity.UserLoginData.Username == nil {
-			break
-		}
-
-		return e.complexity.UserLoginData.Username(childComplexity), true
+		return e.complexity.UserMutation.Store(childComplexity, args["in"].(*model.UserDataInput)), true
 
 	case "UserQuery.Fetch":
 		if e.complexity.UserQuery.Fetch == nil {
@@ -300,6 +317,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputFetchRequestInput,
 		ec.unmarshalInputLoginRequestInput,
+		ec.unmarshalInputUserDataInput,
 		ec.unmarshalInputlogin,
 	)
 	first := true
@@ -404,15 +422,7 @@ type AuthMutation {
 }
 type Data {
 	token: String
-	refreshToken: String
-	userData: UserLoginData
-}
-type UserLoginData{
-	id: String
-	username: String
-	role: String
-    email: String
-	name: String
+	userData: UserData
 }
 type LoginResponse {
 	isSuccess: Boolean
@@ -421,7 +431,7 @@ type LoginResponse {
 	status: Int
 }
 input LoginRequestInput {
-	username: String
+	email: String
 	password: String
 }
 `, BuiltIn: false},
@@ -433,19 +443,21 @@ input login {
 
 type Mutation {
 	Auth: AuthMutation!
+	User: UserMutation!
 }
 type Query {
 	User: UserQuery!
 }`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `directive @User on FIELD_DEFINITION
 type UserQuery {
-	Fetch(in: FetchRequestInput): FetchResponse
+	Fetch(in: FetchRequestInput): FetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type UserMutation {
+	Store(in: UserDataInput): LoginResponse @loggedIn(loggedIn: { access: "Authenticated"})
 }
 input FetchRequestInput {
-	limit: Int
-	offset: Int
-	sortBy: String
-	sort: String
+	role: String
+	name: String
 }
 type FetchResponse {
 	isSuccess: Boolean
@@ -454,7 +466,21 @@ type FetchResponse {
 	status: Int
 }
 type UserItems {
-	items: [UserLoginData!]
+	items: [UserData!]
+}
+type UserData{
+	id: String
+	role: String
+    email: String
+	name: String
+	createdAt: String
+}
+input UserDataInput{
+	id: String
+	role: String
+    email: String
+	name: String
+	password: String
 }`, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
 	directive @key(fields: _FieldSet!) repeatable on OBJECT | INTERFACE

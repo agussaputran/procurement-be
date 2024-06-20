@@ -16,6 +16,11 @@ func (r *mutationResolver) Auth(ctx context.Context) (*model.EmptyObject, error)
 }
 
 // User is the resolver for the User field.
+func (r *mutationResolver) User(ctx context.Context) (*model.EmptyObject, error) {
+	return &model.EmptyObject{}, nil
+}
+
+// User is the resolver for the User field.
 func (r *queryResolver) User(ctx context.Context) (*model.EmptyObject, error) {
 	return &model.EmptyObject{}, nil
 }

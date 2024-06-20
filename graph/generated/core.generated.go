@@ -19,6 +19,7 @@ import (
 
 type MutationResolver interface {
 	Auth(ctx context.Context) (*model.EmptyObject, error)
+	User(ctx context.Context) (*model.EmptyObject, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context) (*model.EmptyObject, error)
@@ -109,6 +110,54 @@ func (ec *executionContext) fieldContext_Mutation_Auth(_ context.Context, field 
 				return ec.fieldContext_AuthMutation_Login(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type AuthMutation", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_User(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_User(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().User(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.EmptyObject)
+	fc.Result = res
+	return ec.marshalNUserMutation2ᚖprocurementᚑbeᚋgraphᚋmodelᚐEmptyObject(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_User(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "Store":
+				return ec.fieldContext_UserMutation_Store(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserMutation", field.Name)
 		},
 	}
 	return fc, nil
@@ -400,6 +449,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "Auth":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_Auth(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "User":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_User(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

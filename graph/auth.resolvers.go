@@ -6,14 +6,27 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"procurement-be/graph/generated"
 	"procurement-be/graph/model"
+	"procurement-be/pkg/user"
+	"procurement-be/utils"
 )
 
 // Login is the resolver for the Login field.
 func (r *authMutationResolver) Login(ctx context.Context, obj *model.EmptyObject, in *model.LoginRequestInput) (*model.LoginResponse, error) {
-	panic(fmt.Errorf("not implemented: Login - Login"))
+	response := new(model.LoginResponse)
+	result, err := r.PkgHandler.UserHandler.Login(ctx, user.LoginRequest{
+		Email:    *in.Email,
+		Password: *in.Password,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CopyObject(result, &response); err != nil {
+		return nil, err
+	}
+	return response, nil
 }
 
 // AuthMutation returns generated.AuthMutationResolver implementation.

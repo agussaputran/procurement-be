@@ -2,11 +2,18 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
+	db "procurement-be/database"
 	graph "procurement-be/graph"
 	generated "procurement-be/graph/generated"
+	"procurement-be/graph/model"
+	"procurement-be/middleware"
+	"procurement-be/pkg/product"
+	"procurement-be/pkg/user"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gofiber/fiber/v2"
@@ -17,17 +24,33 @@ func (h Handler) Graphql() {
 	// set endpoint
 	endpoint := h.router.Group("/graph")
 
-	// set resolver
-	graphConfig := generated.Config{
-		Resolvers: &graph.Resolver{},
+	dbClient := db.Connect()
+	// generate repo
+	userRepo := user.NewRepository(dbClient)
+	productRepo := product.NewProductRepository(dbClient)
+
+	// usecase
+	userUsecase := user.NewUserUsecase(userRepo)
+	productUsecase := product.NewProductUsecase(productRepo)
+
+	pkgHandler := graph.PkgHandler{
+		UserHandler:    user.NewUserHandler(userUsecase),
+		ProductHandler: product.NewProdcutHandler(productUsecase),
 	}
 
-	// graphConfig.Directives.LoggedIn = func(ctx context.Context, obj interface{}, next graphql.Resolver, loggedIn model.Login) (res interface{}, err error) {
-	// 	if err := middleware.Authorization(ctx, ""); err != nil {
-	// 		return nil, errors.New(err.Error())
-	// 	}
-	// 	return next(ctx)
-	// }
+	// set resolver
+	graphConfig := generated.Config{
+		Resolvers: &graph.Resolver{
+			PkgHandler: pkgHandler,
+		},
+	}
+
+	graphConfig.Directives.LoggedIn = func(ctx context.Context, obj interface{}, next graphql.Resolver, loggedIn model.Login) (res interface{}, err error) {
+		if err := middleware.Authentication(ctx, ""); err != nil {
+			return nil, errors.New(err.Error())
+		}
+		return next(ctx)
+	}
 
 	srv := handler.NewDefaultServer(
 		generated.NewExecutableSchema(graphConfig),

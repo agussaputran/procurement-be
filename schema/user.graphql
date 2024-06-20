@@ -1,12 +1,13 @@
 directive @User on FIELD_DEFINITION
 type UserQuery {
-	Fetch(in: FetchRequestInput): FetchResponse
+	Fetch(in: FetchRequestInput): FetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type UserMutation {
+	Store(in: UserDataInput): LoginResponse @loggedIn(loggedIn: { access: "Authenticated"})
 }
 input FetchRequestInput {
-	limit: Int
-	offset: Int
-	sortBy: String
-	sort: String
+	role: String
+	name: String
 }
 type FetchResponse {
 	isSuccess: Boolean
@@ -15,5 +16,19 @@ type FetchResponse {
 	status: Int
 }
 type UserItems {
-	items: [UserLoginData!]
+	items: [UserData!]
+}
+type UserData{
+	id: String
+	role: String
+    email: String
+	name: String
+	createdAt: String
+}
+input UserDataInput{
+	id: String
+	role: String
+    email: String
+	name: String
+	password: String
 }
