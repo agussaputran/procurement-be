@@ -31,6 +31,26 @@ func (r *userMutationResolver) Store(ctx context.Context, obj *model.EmptyObject
 	return response, nil
 }
 
+// Update is the resolver for the Update field.
+func (r *userMutationResolver) Update(ctx context.Context, obj *model.EmptyObject, in *model.UserDataInput) (*model.LoginResponse, error) {
+	response := new(model.LoginResponse)
+	result, err := r.PkgHandler.UserHandler.Update(ctx, user.UserData{
+		ID:       *in.ID,
+		Role:     *in.Role,
+		Email:    *in.Email,
+		Name:     *in.Name,
+		Password: *in.Password,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if err = utils.CopyObject(result, &response); err != nil {
+		return nil, err
+	}
+	return response, nil
+}
+
 // Fetch is the resolver for the Fetch field.
 func (r *userQueryResolver) Fetch(ctx context.Context, obj *model.EmptyObject, in *model.FetchRequestInput) (*model.FetchResponse, error) {
 	response := new(model.FetchResponse)

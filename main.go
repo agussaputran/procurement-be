@@ -26,9 +26,6 @@ func run() error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	// db.Connect()
-	// db.Migrate()
-
 	// start server
 	server := fiber.New(
 		fiber.Config{

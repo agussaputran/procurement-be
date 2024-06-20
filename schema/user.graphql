@@ -4,6 +4,7 @@ type UserQuery {
 }
 type UserMutation {
 	Store(in: UserDataInput): LoginResponse @loggedIn(loggedIn: { access: "Authenticated"})
+	Update(in: UserDataInput): LoginResponse @loggedIn(loggedIn: { access: "Authenticated"})
 }
 input FetchRequestInput {
 	role: String

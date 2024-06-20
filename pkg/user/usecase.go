@@ -4,13 +4,16 @@ import (
 	"context"
 	"os"
 	"procurement-be/utils"
+	"time"
 
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type IUserUsecase interface {
 	Store(ctx context.Context, request UserData) (*LoginResponse, error)
+	Update(ctx context.Context, request UserData) (*LoginResponse, error)
 	Fetch(ctx context.Context, request UserData) (*UserFetchResponse, error)
 	Login(ctx context.Context, request LoginRequest) (*LoginResponse, error)
 }
@@ -26,7 +29,10 @@ func NewUserUsecase(repository IUserRepository) IUserUsecase {
 }
 
 func (u *UserUsecase) Store(ctx context.Context, request UserData) (response *LoginResponse, err error) {
-	user := new(UserData)
+	var (
+		user = new(UserData)
+		id   = uuid.NewString()
+	)
 	user, err = u.repository.FetchByEmail(ctx, request.Email)
 	if err != nil && err.Error() != utils.ErrDataNotFound {
 		return nil, err
@@ -44,7 +50,75 @@ func (u *UserUsecase) Store(ctx context.Context, request UserData) (response *Lo
 	hashedPassword := utils.HashAndSalt([]byte(request.Password))
 	request.HashedPassword = hashedPassword
 
-	err = u.repository.Store(ctx, request)
+	args := bson.M{
+		"id":              id,
+		"name":            request.Name,
+		"email":           request.Email,
+		"hashed_password": request.HashedPassword,
+		"role":            request.Role,
+		"timestamp":       time.Now(),
+		"created_at":      time.Now().Format(utils.DatetimeLayout),
+		"updated_at":      time.Now().Format(utils.DatetimeLayout),
+		"deleted_at":      nil,
+	}
+	err = u.repository.Store(ctx, args)
+	if err != nil {
+		return nil, err
+	}
+
+	response = &LoginResponse{
+		IsSuccess: true,
+		Message:   "request successfull",
+		Status:    1,
+	}
+
+	return
+}
+
+func (u *UserUsecase) Update(ctx context.Context, request UserData) (response *LoginResponse, err error) {
+	var (
+		// user           = new(UserData)
+		hashedPassword string
+	)
+	// user, err = u.repository.FetchByEmail(ctx, request.Email)
+	// if err != nil && err.Error() != utils.ErrDataNotFound {
+	// 	return nil, err
+	// }
+
+	// if user != nil {
+	// 	response = &LoginResponse{
+	// 		IsSuccess: false,
+	// 		Message:   "Email already registered",
+	// 		Status:    1,
+	// 	}
+	// 	return
+	// }
+
+	if request.Password != "" {
+		hashedPassword = utils.HashAndSalt([]byte(request.Password))
+		request.HashedPassword = hashedPassword
+	}
+
+	args := bson.M{
+		"updated_at": time.Now().Format(utils.DatetimeLayout),
+	}
+	if request.Name != "" {
+		args["name"] = request.Name
+	}
+	if request.Email != "" {
+		args["email"] = request.Email
+	}
+	if request.Role != "" {
+		args["role"] = request.Role
+	}
+	if request.Password != "" {
+		args["hashed_password"] = request.HashedPassword
+	}
+
+	filter := bson.M{
+		"id": request.ID,
+	}
+	err = u.repository.Update(ctx, filter, args)
 	if err != nil {
 		return nil, err
 	}
@@ -60,12 +134,12 @@ func (u *UserUsecase) Store(ctx context.Context, request UserData) (response *Lo
 
 func (u *UserUsecase) Fetch(ctx context.Context, request UserData) (response *UserFetchResponse, err error) {
 	var (
-		data []*UserData
-		// filter     []byte
-		filterBson = bson.M{}
+		data       []*UserData
+		filterBson = bson.M{
+			"deleted_at": nil,
+		}
 	)
 
-	// filter, err = bson.Marshal(request)
 	if request.Name != "" {
 		filterBson["name"] = primitive.Regex{Pattern: request.Name, Options: "i"}
 	}

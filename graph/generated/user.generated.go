@@ -19,6 +19,7 @@ import (
 
 type UserMutationResolver interface {
 	Store(ctx context.Context, obj *model.EmptyObject, in *model.UserDataInput) (*model.LoginResponse, error)
+	Update(ctx context.Context, obj *model.EmptyObject, in *model.UserDataInput) (*model.LoginResponse, error)
 }
 type UserQueryResolver interface {
 	Fetch(ctx context.Context, obj *model.EmptyObject, in *model.FetchRequestInput) (*model.FetchResponse, error)
@@ -29,6 +30,21 @@ type UserQueryResolver interface {
 // region    ***************************** args.gotpl *****************************
 
 func (ec *executionContext) field_UserMutation_Store_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.UserDataInput
+	if tmp, ok := rawArgs["in"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("in"))
+		arg0, err = ec.unmarshalOUserDataInput2ᚖprocurementᚑbeᚋgraphᚋmodelᚐUserDataInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["in"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_UserMutation_Update_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 *model.UserDataInput
@@ -578,6 +594,92 @@ func (ec *executionContext) fieldContext_UserMutation_Store(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _UserMutation_Update(ctx context.Context, field graphql.CollectedField, obj *model.EmptyObject) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserMutation_Update(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.UserMutation().Update(rctx, obj, fc.Args["in"].(*model.UserDataInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			loggedIn, err := ec.unmarshalNlogin2procurementᚑbeᚋgraphᚋmodelᚐLogin(ctx, map[string]interface{}{"access": "Authenticated"})
+			if err != nil {
+				return nil, err
+			}
+			if ec.directives.LoggedIn == nil {
+				return nil, errors.New("directive loggedIn is not implemented")
+			}
+			return ec.directives.LoggedIn(ctx, obj, directive0, loggedIn)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.LoginResponse); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *procurement-be/graph/model.LoginResponse`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.LoginResponse)
+	fc.Result = res
+	return ec.marshalOLoginResponse2ᚖprocurementᚑbeᚋgraphᚋmodelᚐLoginResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserMutation_Update(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserMutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "isSuccess":
+				return ec.fieldContext_LoginResponse_isSuccess(ctx, field)
+			case "message":
+				return ec.fieldContext_LoginResponse_message(ctx, field)
+			case "data":
+				return ec.fieldContext_LoginResponse_data(ctx, field)
+			case "status":
+				return ec.fieldContext_LoginResponse_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LoginResponse", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_UserMutation_Update_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UserQuery_Fetch(ctx context.Context, field graphql.CollectedField, obj *model.EmptyObject) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UserQuery_Fetch(ctx, field)
 	if err != nil {
@@ -908,6 +1010,39 @@ func (ec *executionContext) _UserMutation(ctx context.Context, sel ast.Selection
 					}
 				}()
 				res = ec._UserMutation_Store(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "Update":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._UserMutation_Update(ctx, field, obj)
 				return res
 			}
 

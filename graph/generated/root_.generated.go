@@ -93,7 +93,8 @@ type ComplexityRoot struct {
 	}
 
 	UserMutation struct {
-		Store func(childComplexity int, in *model.UserDataInput) int
+		Store  func(childComplexity int, in *model.UserDataInput) int
+		Update func(childComplexity int, in *model.UserDataInput) int
 	}
 
 	UserQuery struct {
@@ -288,6 +289,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserMutation.Store(childComplexity, args["in"].(*model.UserDataInput)), true
 
+	case "UserMutation.Update":
+		if e.complexity.UserMutation.Update == nil {
+			break
+		}
+
+		args, err := ec.field_UserMutation_Update_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.UserMutation.Update(childComplexity, args["in"].(*model.UserDataInput)), true
+
 	case "UserQuery.Fetch":
 		if e.complexity.UserQuery.Fetch == nil {
 			break
@@ -454,6 +467,7 @@ type UserQuery {
 }
 type UserMutation {
 	Store(in: UserDataInput): LoginResponse @loggedIn(loggedIn: { access: "Authenticated"})
+	Update(in: UserDataInput): LoginResponse @loggedIn(loggedIn: { access: "Authenticated"})
 }
 input FetchRequestInput {
 	role: String

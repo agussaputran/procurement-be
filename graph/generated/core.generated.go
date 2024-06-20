@@ -156,6 +156,8 @@ func (ec *executionContext) fieldContext_Mutation_User(_ context.Context, field 
 			switch field.Name {
 			case "Store":
 				return ec.fieldContext_UserMutation_Store(ctx, field)
+			case "Update":
+				return ec.fieldContext_UserMutation_Update(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UserMutation", field.Name)
 		},

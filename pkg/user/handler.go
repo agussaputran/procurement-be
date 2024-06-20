@@ -6,6 +6,7 @@ import (
 
 type IUserHandler interface {
 	Store(ctx context.Context, request UserData) (*LoginResponse, error)
+	Update(ctx context.Context, request UserData) (*LoginResponse, error)
 	Fetch(ctx context.Context, request UserData) (*UserFetchResponse, error)
 	Login(ctx context.Context, request LoginRequest) (*LoginResponse, error)
 }
@@ -22,6 +23,11 @@ func NewUserHandler(usecase IUserUsecase) IUserHandler {
 
 func (h *UserHandler) Store(ctx context.Context, request UserData) (response *LoginResponse, err error) {
 	response, err = h.usecase.Store(ctx, request)
+	return
+}
+
+func (h *UserHandler) Update(ctx context.Context, request UserData) (response *LoginResponse, err error) {
+	response, err = h.usecase.Update(ctx, request)
 	return
 }
 

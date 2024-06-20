@@ -6,13 +6,13 @@ import (
 	"procurement-be/utils"
 	"time"
 
-	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type IUserRepository interface {
-	Store(ctx context.Context, arg UserData) error
+	Store(ctx context.Context, args bson.M) error
+	Update(ctx context.Context, filter, args bson.M) error
 	Fetch(ctx context.Context, filter bson.M) ([]*UserData, error)
 	FetchByEmail(ctx context.Context, email string) (*UserData, error)
 }
@@ -28,18 +28,24 @@ func NewRepository(db *mongo.Client) IUserRepository {
 }
 
 // Store... insert data to users collection based on arg
-func (r *UserRepository) Store(ctx context.Context, arg UserData) (err error) {
-	id := uuid.NewString()
+func (r *UserRepository) Store(ctx context.Context, args bson.M) (err error) {
+	// Set context with timeout for the insert operation
+	ctxDB, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
 	collection := utils.GetCollection("users", r.db)
-	collection.InsertOne(ctx, bson.M{
-		"id":              id,
-		"name":            arg.Name,
-		"email":           arg.Email,
-		"hashed_password": arg.HashedPassword,
-		"role":            arg.Role,
-		"timestamp":       time.Now(),
-		"created_at":      time.Now().Format(utils.DatetimeLayout),
-	})
+	collection.InsertOne(ctxDB, args)
+	return
+}
+
+// Update... update data to users collection based on arg
+func (r *UserRepository) Update(ctx context.Context, filter, args bson.M) (err error) {
+	// Set context with timeout for the update operation
+	ctxDB, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	collection := utils.GetCollection("users", r.db)
+	collection.UpdateOne(ctxDB, filter, bson.M{"$set": args})
 	return
 }
 
@@ -68,7 +74,7 @@ func (r *UserRepository) Fetch(ctx context.Context, filter bson.M) (data []*User
 
 func (r *UserRepository) FetchByEmail(ctx context.Context, email string) (data *UserData, err error) {
 	collection := utils.GetCollection("users", r.db)
-	cursor := collection.FindOne(ctx, bson.D{{"email", email}})
+	cursor := collection.FindOne(ctx, bson.M{"email": email})
 
 	if err = cursor.Decode(&data); err != nil {
 		return nil, err
