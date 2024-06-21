@@ -4,6 +4,7 @@ schema:
   - "schema/core.graphql"
   - "schema/user.graphql"
   - "schema/role.graphql"
+  - "schema/product.graphql"
   - "schema/product_category.graphql"
 
 # Where should the generated server code go?
@@ -78,6 +79,12 @@ models:
     model:
       - procurement-be/graph/model.EmptyObject
   ProductCategoryMutation:
+    model:
+      - procurement-be/graph/model.EmptyObject
+  ProductQuery:
+    model:
+      - procurement-be/graph/model.EmptyObject
+  ProductMutation:
     model:
       - procurement-be/graph/model.EmptyObject
 

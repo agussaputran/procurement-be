@@ -9,9 +9,11 @@ type Mutation {
 	User: UserMutation!
 	Role: RoleMutation!
 	ProductCategory: ProductCategoryMutation!
+	Product: ProductMutation!
 }
 type Query {
 	User: UserQuery!
 	Role: RoleQuery!
 	ProductCategory: ProductCategoryQuery!
+	Product: ProductQuery!
 }

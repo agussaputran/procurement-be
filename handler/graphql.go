@@ -70,10 +70,6 @@ func (h Handler) Graphql() {
 		ctx := r.Context()
 		header := r.Header.Get("Authorization")
 		AddHeader := context.WithValue(ctx, "Authorization", header)
-		// md := metadata.Pairs(
-		// 	"Authorization", header,
-		// )
-		// mdCtx := metadata.NewOutgoingContext(AddHeader, md)
 
 		srv.ServeHTTP(w, r.WithContext(AddHeader))
 	})

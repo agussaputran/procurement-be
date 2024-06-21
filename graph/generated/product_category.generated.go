@@ -1105,6 +1105,13 @@ func (ec *executionContext) marshalOProductCategoryData2ᚕᚖprocurementᚑbe�
 	return ret
 }
 
+func (ec *executionContext) marshalOProductCategoryData2ᚖprocurementᚑbeᚋgraphᚋmodelᚐProductCategoryData(ctx context.Context, sel ast.SelectionSet, v *model.ProductCategoryData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProductCategoryData(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOProductCategoryDataInput2ᚕᚖprocurementᚑbeᚋgraphᚋmodelᚐProductCategoryDataInputᚄ(ctx context.Context, v interface{}) ([]*model.ProductCategoryDataInput, error) {
 	if v == nil {
 		return nil, nil

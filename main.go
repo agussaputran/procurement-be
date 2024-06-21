@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	cf "procurement-be/config"
-	"procurement-be/handler"
+	h "procurement-be/handler"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -41,7 +41,7 @@ func run() error {
 	)
 
 	// register handler
-	if err = handler.NewHandler(server, ctx); err != nil {
+	if err = h.NewHandler(server, ctx); err != nil {
 		return err
 	}
 

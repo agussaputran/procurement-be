@@ -56,6 +56,39 @@ type ProductCategoryItems struct {
 	Items []*ProductCategoryData `json:"items,omitempty"`
 }
 
+type ProductData struct {
+	ID        *string              `json:"id,omitempty"`
+	Name      *string              `json:"name,omitempty"`
+	Desc      *string              `json:"desc,omitempty"`
+	Price     *float64             `json:"price,omitempty"`
+	Vendor    *UserData            `json:"vendor,omitempty"`
+	Category  *ProductCategoryData `json:"category,omitempty"`
+	CreatedAt *string              `json:"createdAt,omitempty"`
+	CreatedBy *string              `json:"createdBy,omitempty"`
+	UpdatedAt *string              `json:"updatedAt,omitempty"`
+	UpdatedBy *string              `json:"updatedBy,omitempty"`
+}
+
+type ProductDataInput struct {
+	ID         *string  `json:"id,omitempty"`
+	Name       *string  `json:"name,omitempty"`
+	Desc       *string  `json:"desc,omitempty"`
+	VendorID   *string  `json:"vendorID,omitempty"`
+	Price      *float64 `json:"price,omitempty"`
+	CategoryID *string  `json:"categoryID,omitempty"`
+}
+
+type ProductFetchResponse struct {
+	IsSuccess *bool         `json:"isSuccess,omitempty"`
+	Message   *string       `json:"message,omitempty"`
+	Data      *ProductItems `json:"data,omitempty"`
+	Status    *int          `json:"status,omitempty"`
+}
+
+type ProductItems struct {
+	Items []*ProductData `json:"items,omitempty"`
+}
+
 type Query struct {
 }
 

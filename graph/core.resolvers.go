@@ -30,6 +30,11 @@ func (r *mutationResolver) ProductCategory(ctx context.Context) (*model.EmptyObj
 	return &model.EmptyObject{}, nil
 }
 
+// Product is the resolver for the Product field.
+func (r *mutationResolver) Product(ctx context.Context) (*model.EmptyObject, error) {
+	return &model.EmptyObject{}, nil
+}
+
 // User is the resolver for the User field.
 func (r *queryResolver) User(ctx context.Context) (*model.EmptyObject, error) {
 	return &model.EmptyObject{}, nil
@@ -42,6 +47,11 @@ func (r *queryResolver) Role(ctx context.Context) (*model.EmptyObject, error) {
 
 // ProductCategory is the resolver for the ProductCategory field.
 func (r *queryResolver) ProductCategory(ctx context.Context) (*model.EmptyObject, error) {
+	return &model.EmptyObject{}, nil
+}
+
+// Product is the resolver for the Product field.
+func (r *queryResolver) Product(ctx context.Context) (*model.EmptyObject, error) {
 	return &model.EmptyObject{}, nil
 }
 

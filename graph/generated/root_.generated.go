@@ -37,6 +37,8 @@ type ResolverRoot interface {
 	Mutation() MutationResolver
 	ProductCategoryMutation() ProductCategoryMutationResolver
 	ProductCategoryQuery() ProductCategoryQueryResolver
+	ProductMutation() ProductMutationResolver
+	ProductQuery() ProductQueryResolver
 	Query() QueryResolver
 	RoleMutation() RoleMutationResolver
 	RoleQuery() RoleQueryResolver
@@ -46,6 +48,7 @@ type ResolverRoot interface {
 
 type DirectiveRoot struct {
 	Auth            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	Product         func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 	ProductCategory func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 	Role            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 	User            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
@@ -78,6 +81,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		Auth            func(childComplexity int) int
+		Product         func(childComplexity int) int
 		ProductCategory func(childComplexity int) int
 		Role            func(childComplexity int) int
 		User            func(childComplexity int) int
@@ -109,7 +113,41 @@ type ComplexityRoot struct {
 		Fetch func(childComplexity int, in *model.FetchRequestInput) int
 	}
 
+	ProductData struct {
+		Category  func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		CreatedBy func(childComplexity int) int
+		Desc      func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Price     func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		UpdatedBy func(childComplexity int) int
+		Vendor    func(childComplexity int) int
+	}
+
+	ProductFetchResponse struct {
+		Data      func(childComplexity int) int
+		IsSuccess func(childComplexity int) int
+		Message   func(childComplexity int) int
+		Status    func(childComplexity int) int
+	}
+
+	ProductItems struct {
+		Items func(childComplexity int) int
+	}
+
+	ProductMutation struct {
+		Store  func(childComplexity int, in []*model.ProductDataInput) int
+		Update func(childComplexity int, in []*model.ProductDataInput) int
+	}
+
+	ProductQuery struct {
+		Fetch func(childComplexity int, in *model.ProductDataInput) int
+	}
+
 	Query struct {
+		Product            func(childComplexity int) int
 		ProductCategory    func(childComplexity int) int
 		Role               func(childComplexity int) int
 		User               func(childComplexity int) int
@@ -276,6 +314,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Auth(childComplexity), true
 
+	case "Mutation.Product":
+		if e.complexity.Mutation.Product == nil {
+			break
+		}
+
+		return e.complexity.Mutation.Product(childComplexity), true
+
 	case "Mutation.ProductCategory":
 		if e.complexity.Mutation.ProductCategory == nil {
 			break
@@ -388,6 +433,154 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProductCategoryQuery.Fetch(childComplexity, args["in"].(*model.FetchRequestInput)), true
+
+	case "ProductData.category":
+		if e.complexity.ProductData.Category == nil {
+			break
+		}
+
+		return e.complexity.ProductData.Category(childComplexity), true
+
+	case "ProductData.createdAt":
+		if e.complexity.ProductData.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProductData.CreatedAt(childComplexity), true
+
+	case "ProductData.createdBy":
+		if e.complexity.ProductData.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.ProductData.CreatedBy(childComplexity), true
+
+	case "ProductData.desc":
+		if e.complexity.ProductData.Desc == nil {
+			break
+		}
+
+		return e.complexity.ProductData.Desc(childComplexity), true
+
+	case "ProductData.id":
+		if e.complexity.ProductData.ID == nil {
+			break
+		}
+
+		return e.complexity.ProductData.ID(childComplexity), true
+
+	case "ProductData.name":
+		if e.complexity.ProductData.Name == nil {
+			break
+		}
+
+		return e.complexity.ProductData.Name(childComplexity), true
+
+	case "ProductData.price":
+		if e.complexity.ProductData.Price == nil {
+			break
+		}
+
+		return e.complexity.ProductData.Price(childComplexity), true
+
+	case "ProductData.updatedAt":
+		if e.complexity.ProductData.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProductData.UpdatedAt(childComplexity), true
+
+	case "ProductData.updatedBy":
+		if e.complexity.ProductData.UpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.ProductData.UpdatedBy(childComplexity), true
+
+	case "ProductData.vendor":
+		if e.complexity.ProductData.Vendor == nil {
+			break
+		}
+
+		return e.complexity.ProductData.Vendor(childComplexity), true
+
+	case "ProductFetchResponse.data":
+		if e.complexity.ProductFetchResponse.Data == nil {
+			break
+		}
+
+		return e.complexity.ProductFetchResponse.Data(childComplexity), true
+
+	case "ProductFetchResponse.isSuccess":
+		if e.complexity.ProductFetchResponse.IsSuccess == nil {
+			break
+		}
+
+		return e.complexity.ProductFetchResponse.IsSuccess(childComplexity), true
+
+	case "ProductFetchResponse.message":
+		if e.complexity.ProductFetchResponse.Message == nil {
+			break
+		}
+
+		return e.complexity.ProductFetchResponse.Message(childComplexity), true
+
+	case "ProductFetchResponse.status":
+		if e.complexity.ProductFetchResponse.Status == nil {
+			break
+		}
+
+		return e.complexity.ProductFetchResponse.Status(childComplexity), true
+
+	case "ProductItems.items":
+		if e.complexity.ProductItems.Items == nil {
+			break
+		}
+
+		return e.complexity.ProductItems.Items(childComplexity), true
+
+	case "ProductMutation.Store":
+		if e.complexity.ProductMutation.Store == nil {
+			break
+		}
+
+		args, err := ec.field_ProductMutation_Store_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.ProductMutation.Store(childComplexity, args["in"].([]*model.ProductDataInput)), true
+
+	case "ProductMutation.Update":
+		if e.complexity.ProductMutation.Update == nil {
+			break
+		}
+
+		args, err := ec.field_ProductMutation_Update_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.ProductMutation.Update(childComplexity, args["in"].([]*model.ProductDataInput)), true
+
+	case "ProductQuery.Fetch":
+		if e.complexity.ProductQuery.Fetch == nil {
+			break
+		}
+
+		args, err := ec.field_ProductQuery_Fetch_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.ProductQuery.Fetch(childComplexity, args["in"].(*model.ProductDataInput)), true
+
+	case "Query.Product":
+		if e.complexity.Query.Product == nil {
+			break
+		}
+
+		return e.complexity.Query.Product(childComplexity), true
 
 	case "Query.ProductCategory":
 		if e.complexity.Query.ProductCategory == nil {
@@ -605,6 +798,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputFetchRequestInput,
 		ec.unmarshalInputLoginRequestInput,
 		ec.unmarshalInputProductCategoryDataInput,
+		ec.unmarshalInputProductDataInput,
 		ec.unmarshalInputRoleDataInput,
 		ec.unmarshalInputUserDataInput,
 		ec.unmarshalInputlogin,
@@ -735,11 +929,13 @@ type Mutation {
 	User: UserMutation!
 	Role: RoleMutation!
 	ProductCategory: ProductCategoryMutation!
+	Product: ProductMutation!
 }
 type Query {
 	User: UserQuery!
 	Role: RoleQuery!
 	ProductCategory: ProductCategoryQuery!
+	Product: ProductQuery!
 }`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `directive @User on FIELD_DEFINITION
 type UserQuery {
@@ -801,6 +997,44 @@ type RoleFetchResponse {
 input RoleDataInput {
 	id: String
 	name: String
+}
+`, BuiltIn: false},
+	{Name: "../../schema/product.graphql", Input: `directive @Product on FIELD_DEFINITION
+type ProductQuery {
+	Fetch(in: ProductDataInput): ProductFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type ProductMutation {
+	Store(in: [ProductDataInput!]): ProductFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+	Update(in: [ProductDataInput!]): ProductFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type ProductData {
+	id: String
+	name: String
+    desc: String
+    price: Float
+    vendor: UserData
+    category: ProductCategoryData
+    createdAt: String
+	createdBy: String
+	updatedAt: String
+	updatedBy: String
+}
+type ProductItems {
+	items: [ProductData!]
+}
+type ProductFetchResponse {
+	isSuccess: Boolean
+	message: String
+	data: ProductItems
+	status: Int
+}
+input ProductDataInput {
+	id: String
+	name: String
+    desc: String
+    vendorID: String
+    price: Float
+    categoryID: String
 }
 `, BuiltIn: false},
 	{Name: "../../schema/product_category.graphql", Input: `directive @ProductCategory on FIELD_DEFINITION

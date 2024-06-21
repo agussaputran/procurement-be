@@ -33,8 +33,9 @@ type User struct {
 func CreateTokenJWT(data User, secret string, expiry int) (response string, err error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
 	claims := &JwtCustomClaims{
-		Username: data.Username,
-		ID:       data.ID,
+		Email: data.Email,
+		ID:    data.ID,
+		Role:  data.Role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: exp,
 		},
@@ -107,15 +108,15 @@ func GetFullnameByToken(token string) (fullname string, success bool) {
 	return fullname, true
 }
 
-func GetIDByToken(token string) (id float64, success bool) {
+func GetIDByToken(token string) (id string, success bool) {
 	payload, check := ExtractClaims(token)
 	if check != nil {
-		return 0, false
+		return "", false
 	}
 	if payload["ID"] == nil {
-		return 0, false
+		return "", false
 	}
-	id = payload["ID"].(float64)
+	id = payload["ID"].(string)
 	return id, true
 }
 
