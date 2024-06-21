@@ -35,15 +35,21 @@ type Config struct {
 type ResolverRoot interface {
 	AuthMutation() AuthMutationResolver
 	Mutation() MutationResolver
+	ProductCategoryMutation() ProductCategoryMutationResolver
+	ProductCategoryQuery() ProductCategoryQueryResolver
 	Query() QueryResolver
+	RoleMutation() RoleMutationResolver
+	RoleQuery() RoleQueryResolver
 	UserMutation() UserMutationResolver
 	UserQuery() UserQueryResolver
 }
 
 type DirectiveRoot struct {
-	Auth     func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
-	User     func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
-	LoggedIn func(ctx context.Context, obj interface{}, next graphql.Resolver, loggedIn model.Login) (res interface{}, err error)
+	Auth            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	ProductCategory func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	Role            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	User            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	LoggedIn        func(ctx context.Context, obj interface{}, next graphql.Resolver, loggedIn model.Login) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -71,13 +77,69 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		Auth func(childComplexity int) int
-		User func(childComplexity int) int
+		Auth            func(childComplexity int) int
+		ProductCategory func(childComplexity int) int
+		Role            func(childComplexity int) int
+		User            func(childComplexity int) int
+	}
+
+	ProductCategoryData struct {
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+	}
+
+	ProductCategoryFetchResponse struct {
+		Data      func(childComplexity int) int
+		IsSuccess func(childComplexity int) int
+		Message   func(childComplexity int) int
+		Status    func(childComplexity int) int
+	}
+
+	ProductCategoryItems struct {
+		Items func(childComplexity int) int
+	}
+
+	ProductCategoryMutation struct {
+		Store  func(childComplexity int, in []*model.ProductCategoryDataInput) int
+		Update func(childComplexity int, in []*model.ProductCategoryDataInput) int
+	}
+
+	ProductCategoryQuery struct {
+		Fetch func(childComplexity int, in *model.FetchRequestInput) int
 	}
 
 	Query struct {
+		ProductCategory    func(childComplexity int) int
+		Role               func(childComplexity int) int
 		User               func(childComplexity int) int
 		__resolve__service func(childComplexity int) int
+	}
+
+	RoleData struct {
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+	}
+
+	RoleFetchResponse struct {
+		Data      func(childComplexity int) int
+		IsSuccess func(childComplexity int) int
+		Message   func(childComplexity int) int
+		Status    func(childComplexity int) int
+	}
+
+	RoleItems struct {
+		Items func(childComplexity int) int
+	}
+
+	RoleMutation struct {
+		Store  func(childComplexity int, in []*model.RoleDataInput) int
+		Update func(childComplexity int, in []*model.RoleDataInput) int
+	}
+
+	RoleQuery struct {
+		Fetch func(childComplexity int, in *model.FetchRequestInput) int
 	}
 
 	UserData struct {
@@ -214,12 +276,132 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Auth(childComplexity), true
 
+	case "Mutation.ProductCategory":
+		if e.complexity.Mutation.ProductCategory == nil {
+			break
+		}
+
+		return e.complexity.Mutation.ProductCategory(childComplexity), true
+
+	case "Mutation.Role":
+		if e.complexity.Mutation.Role == nil {
+			break
+		}
+
+		return e.complexity.Mutation.Role(childComplexity), true
+
 	case "Mutation.User":
 		if e.complexity.Mutation.User == nil {
 			break
 		}
 
 		return e.complexity.Mutation.User(childComplexity), true
+
+	case "ProductCategoryData.createdAt":
+		if e.complexity.ProductCategoryData.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryData.CreatedAt(childComplexity), true
+
+	case "ProductCategoryData.id":
+		if e.complexity.ProductCategoryData.ID == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryData.ID(childComplexity), true
+
+	case "ProductCategoryData.name":
+		if e.complexity.ProductCategoryData.Name == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryData.Name(childComplexity), true
+
+	case "ProductCategoryFetchResponse.data":
+		if e.complexity.ProductCategoryFetchResponse.Data == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryFetchResponse.Data(childComplexity), true
+
+	case "ProductCategoryFetchResponse.isSuccess":
+		if e.complexity.ProductCategoryFetchResponse.IsSuccess == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryFetchResponse.IsSuccess(childComplexity), true
+
+	case "ProductCategoryFetchResponse.message":
+		if e.complexity.ProductCategoryFetchResponse.Message == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryFetchResponse.Message(childComplexity), true
+
+	case "ProductCategoryFetchResponse.status":
+		if e.complexity.ProductCategoryFetchResponse.Status == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryFetchResponse.Status(childComplexity), true
+
+	case "ProductCategoryItems.items":
+		if e.complexity.ProductCategoryItems.Items == nil {
+			break
+		}
+
+		return e.complexity.ProductCategoryItems.Items(childComplexity), true
+
+	case "ProductCategoryMutation.Store":
+		if e.complexity.ProductCategoryMutation.Store == nil {
+			break
+		}
+
+		args, err := ec.field_ProductCategoryMutation_Store_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.ProductCategoryMutation.Store(childComplexity, args["in"].([]*model.ProductCategoryDataInput)), true
+
+	case "ProductCategoryMutation.Update":
+		if e.complexity.ProductCategoryMutation.Update == nil {
+			break
+		}
+
+		args, err := ec.field_ProductCategoryMutation_Update_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.ProductCategoryMutation.Update(childComplexity, args["in"].([]*model.ProductCategoryDataInput)), true
+
+	case "ProductCategoryQuery.Fetch":
+		if e.complexity.ProductCategoryQuery.Fetch == nil {
+			break
+		}
+
+		args, err := ec.field_ProductCategoryQuery_Fetch_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.ProductCategoryQuery.Fetch(childComplexity, args["in"].(*model.FetchRequestInput)), true
+
+	case "Query.ProductCategory":
+		if e.complexity.Query.ProductCategory == nil {
+			break
+		}
+
+		return e.complexity.Query.ProductCategory(childComplexity), true
+
+	case "Query.Role":
+		if e.complexity.Query.Role == nil {
+			break
+		}
+
+		return e.complexity.Query.Role(childComplexity), true
 
 	case "Query.User":
 		if e.complexity.Query.User == nil {
@@ -234,6 +416,98 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.__resolve__service(childComplexity), true
+
+	case "RoleData.createdAt":
+		if e.complexity.RoleData.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.RoleData.CreatedAt(childComplexity), true
+
+	case "RoleData.id":
+		if e.complexity.RoleData.ID == nil {
+			break
+		}
+
+		return e.complexity.RoleData.ID(childComplexity), true
+
+	case "RoleData.name":
+		if e.complexity.RoleData.Name == nil {
+			break
+		}
+
+		return e.complexity.RoleData.Name(childComplexity), true
+
+	case "RoleFetchResponse.data":
+		if e.complexity.RoleFetchResponse.Data == nil {
+			break
+		}
+
+		return e.complexity.RoleFetchResponse.Data(childComplexity), true
+
+	case "RoleFetchResponse.isSuccess":
+		if e.complexity.RoleFetchResponse.IsSuccess == nil {
+			break
+		}
+
+		return e.complexity.RoleFetchResponse.IsSuccess(childComplexity), true
+
+	case "RoleFetchResponse.message":
+		if e.complexity.RoleFetchResponse.Message == nil {
+			break
+		}
+
+		return e.complexity.RoleFetchResponse.Message(childComplexity), true
+
+	case "RoleFetchResponse.status":
+		if e.complexity.RoleFetchResponse.Status == nil {
+			break
+		}
+
+		return e.complexity.RoleFetchResponse.Status(childComplexity), true
+
+	case "RoleItems.items":
+		if e.complexity.RoleItems.Items == nil {
+			break
+		}
+
+		return e.complexity.RoleItems.Items(childComplexity), true
+
+	case "RoleMutation.Store":
+		if e.complexity.RoleMutation.Store == nil {
+			break
+		}
+
+		args, err := ec.field_RoleMutation_Store_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.RoleMutation.Store(childComplexity, args["in"].([]*model.RoleDataInput)), true
+
+	case "RoleMutation.Update":
+		if e.complexity.RoleMutation.Update == nil {
+			break
+		}
+
+		args, err := ec.field_RoleMutation_Update_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.RoleMutation.Update(childComplexity, args["in"].([]*model.RoleDataInput)), true
+
+	case "RoleQuery.Fetch":
+		if e.complexity.RoleQuery.Fetch == nil {
+			break
+		}
+
+		args, err := ec.field_RoleQuery_Fetch_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.RoleQuery.Fetch(childComplexity, args["in"].(*model.FetchRequestInput)), true
 
 	case "UserData.createdAt":
 		if e.complexity.UserData.CreatedAt == nil {
@@ -330,6 +604,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputFetchRequestInput,
 		ec.unmarshalInputLoginRequestInput,
+		ec.unmarshalInputProductCategoryDataInput,
+		ec.unmarshalInputRoleDataInput,
 		ec.unmarshalInputUserDataInput,
 		ec.unmarshalInputlogin,
 	)
@@ -457,9 +733,13 @@ input login {
 type Mutation {
 	Auth: AuthMutation!
 	User: UserMutation!
+	Role: RoleMutation!
+	ProductCategory: ProductCategoryMutation!
 }
 type Query {
 	User: UserQuery!
+	Role: RoleQuery!
+	ProductCategory: ProductCategoryQuery!
 }`, BuiltIn: false},
 	{Name: "../../schema/user.graphql", Input: `directive @User on FIELD_DEFINITION
 type UserQuery {
@@ -496,6 +776,60 @@ input UserDataInput{
 	name: String
 	password: String
 }`, BuiltIn: false},
+	{Name: "../../schema/role.graphql", Input: `directive @Role on FIELD_DEFINITION
+type RoleQuery {
+	Fetch(in: FetchRequestInput): RoleFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type RoleMutation {
+	Store(in: [RoleDataInput!]): RoleFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+	Update(in: [RoleDataInput!]): RoleFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type RoleData {
+	id: String
+    name: String
+    createdAt: String
+}
+type RoleItems {
+	items: [RoleData!]
+}
+type RoleFetchResponse {
+	isSuccess: Boolean
+	message: String
+	data: RoleItems
+	status: Int
+}
+input RoleDataInput {
+	id: String
+	name: String
+}
+`, BuiltIn: false},
+	{Name: "../../schema/product_category.graphql", Input: `directive @ProductCategory on FIELD_DEFINITION
+type ProductCategoryQuery {
+	Fetch(in: FetchRequestInput): ProductCategoryFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type ProductCategoryMutation {
+	Store(in: [ProductCategoryDataInput!]): ProductCategoryFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+	Update(in: [ProductCategoryDataInput!]): ProductCategoryFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type ProductCategoryData {
+	id: String
+    name: String
+    createdAt: String
+}
+type ProductCategoryItems {
+	items: [ProductCategoryData!]
+}
+type ProductCategoryFetchResponse {
+	isSuccess: Boolean
+	message: String
+	data: ProductCategoryItems
+	status: Int
+}
+input ProductCategoryDataInput {
+	id: String
+	name: String
+}
+`, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
 	directive @key(fields: _FieldSet!) repeatable on OBJECT | INTERFACE
 	directive @requires(fields: _FieldSet!) on FIELD_DEFINITION

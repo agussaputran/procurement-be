@@ -3,6 +3,8 @@ schema:
   - "schema/auth.graphql"
   - "schema/core.graphql"
   - "schema/user.graphql"
+  - "schema/role.graphql"
+  - "schema/product_category.graphql"
 
 # Where should the generated server code go?
 exec:
@@ -64,6 +66,18 @@ models:
     model:
       - procurement-be/graph/model.EmptyObject
   AuthMutation:
+    model:
+      - procurement-be/graph/model.EmptyObject
+  RoleQuery:
+    model:
+      - procurement-be/graph/model.EmptyObject
+  RoleMutation:
+    model:
+      - procurement-be/graph/model.EmptyObject
+  ProductCategoryQuery:
+    model:
+      - procurement-be/graph/model.EmptyObject
+  ProductCategoryMutation:
     model:
       - procurement-be/graph/model.EmptyObject
 

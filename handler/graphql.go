@@ -11,6 +11,8 @@ import (
 	"procurement-be/graph/model"
 	"procurement-be/middleware"
 	"procurement-be/pkg/product"
+	"procurement-be/pkg/product_category"
+	"procurement-be/pkg/role"
 	"procurement-be/pkg/user"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -25,17 +27,25 @@ func (h Handler) Graphql() {
 	endpoint := h.router.Group("/graph")
 
 	dbClient := db.Connect()
+
 	// generate repo
-	userRepo := user.NewRepository(dbClient)
+	userRepo := user.NewUserRepository(dbClient)
 	productRepo := product.NewProductRepository(dbClient)
+	roleRepo := role.NewRoleRepository(dbClient)
+	productCategoryRepo := product_category.NewProductCategoryRepository(dbClient)
 
 	// usecase
 	userUsecase := user.NewUserUsecase(userRepo)
 	productUsecase := product.NewProductUsecase(productRepo)
+	roleUsecase := role.NewRoleUsecase(roleRepo)
+	productCategoryUsecase := product_category.NewProductCategoryUsecase(productCategoryRepo)
 
+	// handler
 	pkgHandler := graph.PkgHandler{
-		UserHandler:    user.NewUserHandler(userUsecase),
-		ProductHandler: product.NewProdcutHandler(productUsecase),
+		UserHandler:            user.NewUserHandler(userUsecase),
+		ProductHandler:         product.NewProdcutHandler(productUsecase),
+		RoleHandler:            role.NewRoleHandler(roleUsecase),
+		ProductCategoryHandler: product_category.NewProductCategoryHandler(productCategoryUsecase),
 	}
 
 	// set resolver

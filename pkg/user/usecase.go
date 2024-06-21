@@ -80,19 +80,6 @@ func (u *UserUsecase) Update(ctx context.Context, request UserData) (response *L
 		// user           = new(UserData)
 		hashedPassword string
 	)
-	// user, err = u.repository.FetchByEmail(ctx, request.Email)
-	// if err != nil && err.Error() != utils.ErrDataNotFound {
-	// 	return nil, err
-	// }
-
-	// if user != nil {
-	// 	response = &LoginResponse{
-	// 		IsSuccess: false,
-	// 		Message:   "Email already registered",
-	// 		Status:    1,
-	// 	}
-	// 	return
-	// }
 
 	if request.Password != "" {
 		hashedPassword = utils.HashAndSalt([]byte(request.Password))

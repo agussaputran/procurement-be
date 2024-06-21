@@ -34,7 +34,51 @@ type LoginResponse struct {
 type Mutation struct {
 }
 
+type ProductCategoryData struct {
+	ID        *string `json:"id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+}
+
+type ProductCategoryDataInput struct {
+	ID   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type ProductCategoryFetchResponse struct {
+	IsSuccess *bool                 `json:"isSuccess,omitempty"`
+	Message   *string               `json:"message,omitempty"`
+	Data      *ProductCategoryItems `json:"data,omitempty"`
+	Status    *int                  `json:"status,omitempty"`
+}
+
+type ProductCategoryItems struct {
+	Items []*ProductCategoryData `json:"items,omitempty"`
+}
+
 type Query struct {
+}
+
+type RoleData struct {
+	ID        *string `json:"id,omitempty"`
+	Name      *string `json:"name,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+}
+
+type RoleDataInput struct {
+	ID   *string `json:"id,omitempty"`
+	Name *string `json:"name,omitempty"`
+}
+
+type RoleFetchResponse struct {
+	IsSuccess *bool      `json:"isSuccess,omitempty"`
+	Message   *string    `json:"message,omitempty"`
+	Data      *RoleItems `json:"data,omitempty"`
+	Status    *int       `json:"status,omitempty"`
+}
+
+type RoleItems struct {
+	Items []*RoleData `json:"items,omitempty"`
 }
 
 type UserData struct {

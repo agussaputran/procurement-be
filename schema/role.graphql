@@ -1,0 +1,26 @@
+directive @Role on FIELD_DEFINITION
+type RoleQuery {
+	Fetch(in: FetchRequestInput): RoleFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type RoleMutation {
+	Store(in: [RoleDataInput!]): RoleFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+	Update(in: [RoleDataInput!]): RoleFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type RoleData {
+	id: String
+    name: String
+    createdAt: String
+}
+type RoleItems {
+	items: [RoleData!]
+}
+type RoleFetchResponse {
+	isSuccess: Boolean
+	message: String
+	data: RoleItems
+	status: Int
+}
+input RoleDataInput {
+	id: String
+	name: String
+}

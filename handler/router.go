@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"procurement-be/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -38,13 +39,7 @@ func NewHandler(router *fiber.App, ctx context.Context) error {
 func (h Handler) Init() error {
 
 	// middleware
-	// h.router.Use(middleware.Logger())
-
-	// h.router.Use(middleware.Limiter())
-
-	// h.router.Use(middleware.Cors())
-
-	// h.router.Use(adaptor.HTTPMiddleware(middleware.TracingMiddleware))
+	h.router.Use(middleware.Cors())
 
 	// health check
 	h.router.Get("health-check", func(c *fiber.Ctx) error {

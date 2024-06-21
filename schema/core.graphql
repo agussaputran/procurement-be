@@ -7,7 +7,11 @@ input login {
 type Mutation {
 	Auth: AuthMutation!
 	User: UserMutation!
+	Role: RoleMutation!
+	ProductCategory: ProductCategoryMutation!
 }
 type Query {
 	User: UserQuery!
+	Role: RoleQuery!
+	ProductCategory: ProductCategoryQuery!
 }

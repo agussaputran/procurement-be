@@ -1,0 +1,26 @@
+directive @ProductCategory on FIELD_DEFINITION
+type ProductCategoryQuery {
+	Fetch(in: FetchRequestInput): ProductCategoryFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type ProductCategoryMutation {
+	Store(in: [ProductCategoryDataInput!]): ProductCategoryFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+	Update(in: [ProductCategoryDataInput!]): ProductCategoryFetchResponse @loggedIn(loggedIn: { access: "Authenticated"})
+}
+type ProductCategoryData {
+	id: String
+    name: String
+    createdAt: String
+}
+type ProductCategoryItems {
+	items: [ProductCategoryData!]
+}
+type ProductCategoryFetchResponse {
+	isSuccess: Boolean
+	message: String
+	data: ProductCategoryItems
+	status: Int
+}
+input ProductCategoryDataInput {
+	id: String
+	name: String
+}

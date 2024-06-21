@@ -2,6 +2,8 @@ package graph
 
 import (
 	"procurement-be/pkg/product"
+	"procurement-be/pkg/product_category"
+	"procurement-be/pkg/role"
 	"procurement-be/pkg/user"
 )
 
@@ -14,6 +16,8 @@ type Resolver struct {
 }
 
 type PkgHandler struct {
-	UserHandler    user.IUserHandler
-	ProductHandler product.IProdcutHandler
+	UserHandler            user.IUserHandler
+	ProductHandler         product.IProdcutHandler
+	RoleHandler            role.IRoleHandler
+	ProductCategoryHandler product_category.IProductCategoryHandler
 }

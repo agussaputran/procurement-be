@@ -21,7 +21,7 @@ type UserRepository struct {
 	db *mongo.Client
 }
 
-func NewRepository(db *mongo.Client) IUserRepository {
+func NewUserRepository(db *mongo.Client) IUserRepository {
 	return &UserRepository{
 		db: db,
 	}
