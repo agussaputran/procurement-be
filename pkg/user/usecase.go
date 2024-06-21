@@ -30,9 +30,12 @@ func NewUserUsecase(repository IUserRepository) IUserUsecase {
 
 func (u *UserUsecase) Store(ctx context.Context, request UserData) (response *LoginResponse, err error) {
 	var (
-		user = new(UserData)
-		id   = uuid.NewString()
+		user  = new(UserData)
+		id    = uuid.NewString()
+		token = ctx.Value("Authorization").(string)
 	)
+	userID, _ := utils.GetIDByToken(token)
+
 	user, err = u.repository.FetchByEmail(ctx, request.Email)
 	if err != nil && err.Error() != utils.ErrDataNotFound {
 		return nil, err
@@ -58,7 +61,9 @@ func (u *UserUsecase) Store(ctx context.Context, request UserData) (response *Lo
 		"role":            request.Role,
 		"timestamp":       time.Now(),
 		"created_at":      time.Now().Format(utils.DatetimeLayout),
+		"created_by":      userID,
 		"updated_at":      time.Now().Format(utils.DatetimeLayout),
+		"updated_by":      userID,
 		"deleted_at":      nil,
 	}
 	err = u.repository.Store(ctx, args)
@@ -77,9 +82,10 @@ func (u *UserUsecase) Store(ctx context.Context, request UserData) (response *Lo
 
 func (u *UserUsecase) Update(ctx context.Context, request UserData) (response *LoginResponse, err error) {
 	var (
-		// user           = new(UserData)
 		hashedPassword string
+		token          = ctx.Value("Authorization").(string)
 	)
+	userID, _ := utils.GetIDByToken(token)
 
 	if request.Password != "" {
 		hashedPassword = utils.HashAndSalt([]byte(request.Password))
@@ -103,7 +109,7 @@ func (u *UserUsecase) Update(ctx context.Context, request UserData) (response *L
 	}
 
 	filter := bson.M{
-		"id": request.ID,
+		"id": userID,
 	}
 	err = u.repository.Update(ctx, filter, args)
 	if err != nil {

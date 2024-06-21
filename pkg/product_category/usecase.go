@@ -30,13 +30,17 @@ func (u *ProductCategoryUsecase) Store(ctx context.Context, request []ProductCat
 	var (
 		id        string
 		documents []interface{}
+		token     = ctx.Value("Authorization").(string)
 	)
+	userID, _ := utils.GetIDByToken(token)
 
 	for i := range request {
 		id = uuid.NewString()
 		request[i].ID = id
 		request[i].CreatedAt = time.Now().Format(utils.DatetimeLayout)
 		request[i].UpdatedAt = time.Now().Format(utils.DatetimeLayout)
+		request[i].CreatedBy = userID
+		request[i].UpdatedBy = userID
 		request[i].DeletedAt = nil
 
 		documents = append(documents, request[i])
@@ -58,14 +62,17 @@ func (u *ProductCategoryUsecase) Store(ctx context.Context, request []ProductCat
 
 func (u *ProductCategoryUsecase) Update(ctx context.Context, request []ProductCategoryData) (response *ProductCategoryFetchResponse, err error) {
 	var (
-		args = []mongo.WriteModel{}
+		args  = []mongo.WriteModel{}
+		token = ctx.Value("Authorization").(string)
 	)
+	userID, _ := utils.GetIDByToken(token)
 
 	for _, v := range request {
 		update := bson.M{}
 		if v.Name != "" {
 			update["name"] = v.Name
 			update["updated_at"] = time.Now().Format(utils.DatetimeLayout)
+			update["updated_by"] = userID
 		}
 
 		args = append(args, mongo.NewUpdateOneModel().
